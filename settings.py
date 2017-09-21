@@ -12,6 +12,8 @@ folders.append(intermediate_folder)
 # data folders
 data_folder = os.path.join(intermediate_folder, 'data')
 folders.append(data_folder)
+patch_folder = os.path.join(data_folder, 'patch')
+folders.append(patch_folder)
 split_folder = os.path.join(data_folder, 'split')
 folders.append(split_folder)
 npy_folder = os.path.join(data_folder, 'npy')
