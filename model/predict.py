@@ -27,7 +27,7 @@ class Segmenter(object):
         cnn = get_cnn(config["id"], config["params"])
         model = cnn.model()
         model.load_weights(os.path.join(self.model_folder, 'model_checkpoint.hdf5'))
-        predicted_prob = model.predict(vol_nda, verbose=1)
+        predicted_prob = model.predict(vol_nda, verbose=1, batch_size=8)
         del model
         K.clear_session()
         return predicted_prob
@@ -39,11 +39,23 @@ class Segmenter(object):
         print('predict validation')
         with open(os.path.join(self.model_folder, 'chronicle', 'dataset.json')) as json_file:
             dataset_config = json.load(json_file)
-        data_folder = os.path.join(self.intermediate_folder, 'data', 'npy', dataset_config["npy uid"],
-                                   str(dataset_config["folds"][0]))
-        nda = np.load(os.path.join(data_folder, 'x_val.npy'))
-        prediction = self.__predict(nda)
-        np.save(os.path.join(output_folder, 'val_pred.npy'), prediction)
+        for angle in np.arange(1, 17, 1):
+            angle_str = str(angle).zfill(2)
+            data_folder = os.path.join(self.intermediate_folder, 'data', 'npy', dataset_config["npy uid"],
+                                       str(dataset_config["folds"][0]))
+            nda = np.load(os.path.join(data_folder, 'x_val_' + angle_str + '.npy'))
+            print('predicting original...')
+            prediction = self.__predict(nda)
+            np.save(os.path.join(output_folder, 'val_pred_' + angle_str + '.npy'), prediction)
+            print('predicting darker version...')
+            nda *= 0.7
+            prediction = self.__predict(nda)
+            np.save(os.path.join(output_folder, 'val_pred_' + angle_str + '_d.npy'), prediction)
+            print('predicting brighter version...')
+            nda *= 2
+            prediction = self.__predict(nda)
+            nda[nda >= 1] = 1
+            np.save(os.path.join(output_folder, 'val_pred_' + angle_str + '_brighter.npy'), prediction)
 
     def predict_test(self, name):
         output_folder = os.path.join(self.model_folder, 'test_predictions')

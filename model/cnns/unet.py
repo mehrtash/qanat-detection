@@ -1,5 +1,5 @@
 from keras.layers import Input, Convolution2D, BatchNormalization, \
-    Activation, MaxPooling2D, UpSampling2D, Dropout, Cropping2D, merge
+    Activation, MaxPooling2D, UpSampling2D, Dropout, Cropping2D, concatenate
 from keras.layers.advanced_activations import PReLU, LeakyReLU
 from keras.models import Model
 from keras.optimizers import Adam
@@ -37,12 +37,8 @@ class Unet:
     def root_1(self, x):
         filter_factor = self.model_params["filter_factor"]
 
-        conv_0 = self.conv_bn_relu(x, filter_factor * 8, 3, 3)
-        conv_0 = self.conv_bn_relu(conv_0, filter_factor * 8, 3, 3)
-        pool_0 = MaxPooling2D(pool_size=(2, 2))(conv_0)
-
-        conv0 = self.conv_bn_relu(pool_0, filter_factor * 8, 3, 3)
-        conv0 = self.conv_bn_relu(conv0, filter_factor * 8, 3, 3)
+        conv0 = self.conv_bn_relu(x, filter_factor * 16, 3, 3)
+        conv0 = self.conv_bn_relu(conv0, filter_factor * 16, 3, 3)
         pool0 = MaxPooling2D(pool_size=(2, 2))(conv0)
 
         conv1 = self.conv_bn_relu(pool0, filter_factor * 16, 3, 3)
@@ -64,41 +60,35 @@ class Unet:
         conv5 = self.conv_bn_relu(pool4, filter_factor * 256, 3, 3)
         conv5 = self.conv_bn_relu(conv5, filter_factor * 256, 3, 3)
 
-        conv4_cropped = Cropping2D(((4, 4), (4, 4)))(conv4)
-        up6 = merge([UpSampling2D(size=(2, 2))(conv5), conv4_cropped], mode='concat', concat_axis=-1)
+        # conv4_cropped = Cropping2D(((4, 4), (4, 4)))(conv4)
+        up6 = concatenate([UpSampling2D(size=(2, 2))(conv5), conv4], axis=-1)
         conv6 = self.conv_bn_relu(up6, filter_factor * 128, 3, 3)
         conv6 = self.conv_bn_relu(conv6, filter_factor * 128, 3, 3)
 
-        conv3_cropped = Cropping2D(((16, 16), (16, 16)))(conv3)
-        up7 = merge([UpSampling2D(size=(2, 2))(conv6), conv3_cropped], mode='concat', concat_axis=-1)
+        # conv3_cropped = Cropping2D(((16, 16), (16, 16)))(conv3)
+        up7 = concatenate([UpSampling2D(size=(2, 2))(conv6), conv3], axis=-1)
         conv7 = self.conv_bn_relu(up7, filter_factor * 64, 3, 3)
         conv7 = self.conv_bn_relu(conv7, filter_factor * 64, 3, 3)
 
-        conv2_cropped = Cropping2D(((40, 40), (40, 40)))(conv2)
-        up8 = merge([UpSampling2D(size=(2, 2))(conv7), conv2_cropped], mode='concat', concat_axis=-1)
+        # conv2_cropped = Cropping2D(((40, 40), (40, 40)))(conv2)
+        up8 = concatenate([UpSampling2D(size=(2, 2))(conv7), conv2], axis=-1)
         conv8 = self.conv_bn_relu(up8, filter_factor * 32, 3, 3)
         conv8 = self.conv_bn_relu(conv8, filter_factor * 32, 3, 3)
 
-        conv1_cropped = Cropping2D(((88, 88), (88, 88)))(conv1)
-        up9 = merge([UpSampling2D(size=(2, 2))(conv8), conv1_cropped], mode='concat', concat_axis=-1)
+        # conv1_cropped = Cropping2D(((88, 88), (88, 88)))(conv1)
+        up9 = concatenate([UpSampling2D(size=(2, 2))(conv8), conv1], axis=-1)
         conv9 = self.conv_bn_relu(up9, filter_factor * 16, 3, 3)
         conv9 = self.conv_bn_relu(conv9, filter_factor * 16, 3, 3)
 
-        conv0_cropped = Cropping2D(((184, 184), (184, 184)))(conv0)
-        up10 = merge([UpSampling2D(size=(2, 2))(conv9), conv0_cropped], mode='concat', concat_axis=-1)
-        conv10 = self.conv_bn_relu(up10, filter_factor * 8, 3, 3)
-        conv10 = self.conv_bn_relu(conv10, filter_factor * 8, 3, 3)
+        up10 = concatenate([UpSampling2D(size=(2, 2))(conv9), conv0], axis=-1)
+        conv10 = self.conv_bn_relu(up10, filter_factor * 16, 3, 3)
+        conv10 = self.conv_bn_relu(conv10, filter_factor * 16, 3, 3)
 
-        conv_0_cropped = Cropping2D(((376, 376), (376, 376)))(conv_0)
-        up11 = merge([UpSampling2D(size=(2, 2))(conv10), conv_0_cropped], mode='concat', concat_axis=-1)
-        conv11 = self.conv_bn_relu(up11, filter_factor * 8, 3, 3)
-        conv11 = self.conv_bn_relu(conv11, filter_factor * 8, 3, 3)
-
-        conv12 = Convolution2D(self.n_classes, (1, 1), activation='sigmoid')(conv11)
-        return conv12
+        conv11 = Convolution2D(self.n_classes, (1, 1), activation='sigmoid')(conv10)
+        return conv11
 
     def model(self):
-        image = Input((200, 200, 1))
+        image = Input((224, 224, 1))
         softmax_output = self.root_1(image)
         model = Model(inputs=image, outputs=softmax_output)
 
