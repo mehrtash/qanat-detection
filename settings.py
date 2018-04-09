@@ -8,7 +8,7 @@ if socket.gethostname() in ['winterfell', 'theBeast']:
     intermediate_folder = os.path.join(root, 'intermediate')
 
 if socket.gethostname() == 'redkeep':
-    root = "/media/deepinfer/mehrtash/qanat/"
+    root = "/media/deepinfer/mehrtash2/qanat/"
     raw_folder = os.path.join(root, 'raw')
     intermediate_folder = os.path.join(root, 'intermediate')
 
