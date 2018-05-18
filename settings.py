@@ -2,6 +2,12 @@ import os
 import socket
 
 folders = []
+if socket.gethostname() in ['odysseus']:
+    root = "/media/mehrtash/mehrtash2/qanat/"
+    raw_folder = os.path.join(root, 'raw')
+    intermediate_folder = os.path.join(root, 'intermediate')
+
+
 if socket.gethostname() in ['winterfell', 'theBeast']:
     root = "/home/mehrtash/dropbox/qanat/"
     raw_folder = os.path.join(root, 'raw')
