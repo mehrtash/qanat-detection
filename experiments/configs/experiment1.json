@@ -1,6 +1,6 @@
 {
   "experiment": {
-    "id": "encoder decoder",
+    "id": "unet",
     "experiment description": "blah blah",
     "datasets":
     [ {

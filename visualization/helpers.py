@@ -44,10 +44,10 @@ class ExperimentsBoard:
         interactive(self.update_plots, changevalue=self.metric_multiple)
         self.smoothing_factor = widgets.IntSlider(value=5, min=0, max=20, step=1,
                                                   description='Smoothing:', orientation='horizontal', readout=True,
-                                                  readout_format='i', slider_color='white')
+                                                  readout_format='d', slider_color='white')
         self.smoothing_alpha = widgets.FloatSlider(value=0.1, min=0, max=1, step=0.1,
                                                    description='Smoothing Alpha:', orientation='horizontal',
-                                                   readout=True, readout_format='i', slider_color='white')
+                                                   readout=True, readout_format='d', slider_color='white')
 
         select_all = widgets.Button(description='Select All', layout=self.items_layout)
         select_all.on_click(self.on_select_all)
@@ -120,7 +120,7 @@ class ExperimentsBoard:
     def update_plots(self, changevalue):
         current_metrics = self.metric_multiple.value
         with self.output:
-            plt.figure(figsize=(16, 10));
+            plt.figure(figsize=(16, 10), dpi=150);
             marker = None
             for i, metric in enumerate(current_metrics):
                 for key, df in self.dfs.items():

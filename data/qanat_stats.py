@@ -55,4 +55,4 @@ if __name__ == '__main__':
                         'ccf file path': outpu_ccf_file_path,
                     }))
         print('for data source {} there are {} qanats.'.format(data_source, n_qanats))
-    pd.DataFrame(d).to_csv(os.path.join(sheets_folder, 'third_attempt_qanat_stats.csv'))
+    pd.DataFrame(d).to_csv(os.path.join(sheets_folder, 'third_attempt_qanat_stats_v2.csv'))

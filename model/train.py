@@ -2,13 +2,13 @@ import json
 import os
 import numpy as np
 
+from utils.helpers import get_timestamp
+from model.cnn import get_cnn
 
 module_root = '..'
 import sys
-sys.path.append(module_root)
 
-from utils.helpers import get_timestamp
-from model.cnn import get_cnn
+sys.path.append(module_root)
 
 
 class Experiments:
@@ -75,16 +75,10 @@ class Experiments:
             json.dump(train_params, output_json_file)
 
         cnn = get_cnn(cnn_params["id"], cnn_params["params"])
+        data = self.data(dataset, chronicle_folder)
 
         from keras.callbacks import ModelCheckpoint, CSVLogger, TensorBoard, ReduceLROnPlateau, EarlyStopping
-        from keras.utils import plot_model
-        model = cnn.model()
-        plot_model(model, to_file=os.path.join(experiment_folder, 'model.png'), show_shapes=True)
-        with open(os.path.join(experiment_folder, 'summary.txt'), 'w') as fh:
-            model.summary(print_fn=lambda x: fh.write(x + '\n'))
-
-        print('loading data...')
-        data = self.data(dataset, chronicle_folder)
+        # from keras.utils import plot_model
 
         print('-' * 100)
         x, y, validation_data = data
@@ -121,8 +115,10 @@ class Experiments:
         # usage: tensorboard --logdir=/full_path_to_your_logs
         callbacks_list.append(board)
 
+        model = cnn.model()
         with open(os.path.join(experiment_folder, 'model.json'), 'w') as outfile:
             json.dump(model.to_json(), outfile)
+        # plot_model(model, to_file=os.path.join(experiment_folder, 'model.png'))
 
         if bool(cnn_params["summary"]):
             print(model.summary())
