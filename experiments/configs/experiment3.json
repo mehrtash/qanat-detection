@@ -4,7 +4,7 @@
     "experiment description": "third attempt seven fold cross validation",
     "datasets": [
       {
-        "npy uid": "2018_06_20_10_40_31",
+        "npy uid": "2018_06_20_13_45_38",
         "folds": [
           0,
           1,
@@ -25,7 +25,7 @@
         "params": {
           "activation": "relu",
           "l2_penalty": 1e-5,
-          "dropout_prob": 0.2,
+          "dropout_prob": 0.1,
           "filter_factor": 1,
           "adam_lr": 1e-3,
           "n_classes": 1
@@ -34,7 +34,7 @@
     ],
     "trainparams": [
       {
-        "batch size": 32,
+        "batch size": 50,
         "epochs": 100,
         "verbose": 1,
         "early stopping": {

@@ -10,17 +10,34 @@ from data.helpers import flip_a_coin
 from settings import npy_folder, patch_folder
 
 DATA_TYPE = 'train'
+POSITIVE_SIZE_THRESHOLD = 150
 
 np.random.seed(17)
 
 
+def get_image_box_center(label, output_shape, positive=False):
+    input_shape = np.shape(label)[0]
+    sum = 0
+    if positive:
+        while sum <= POSITIVE_SIZE_THRESHOLD:
+            center = np.random.randint(int(output_shape / 2), int(input_shape - output_shape / 2), (1, 2))[0]
+            label_patch = label[int(center[0] - output_shape / 2):int(center[0] + output_shape / 2),
+                          int(center[1] - output_shape / 2):int(center[1] + output_shape / 2)]
+            sum = np.sum(label_patch)
+    else:
+        center = np.random.randint(int(output_shape / 2), int(input_shape - output_shape / 2), (1, 2))[0]
+    return center
+
+
 def get_image_chunk(image, label, output_shape, chunk_size):
     # todo: we assume that both image and patch are squares, shape is also a single number
-    input_shape = np.shape(label)[0]
     nda = np.zeros((chunk_size, shape, shape))
     nda_label = np.zeros_like(nda)
     for i in range(chunk_size):
-        center = np.random.randint(int(output_shape / 2), int(input_shape - output_shape / 2), (1, 2))[0]
+        if i % 4 == 0:
+            center = get_image_box_center(label, output_shape)
+        else:
+            center = get_image_box_center(label, output_shape, positive=True)
         image_patch = image[int(center[0] - output_shape / 2):int(center[0] + output_shape / 2),
                       int(center[1] - output_shape / 2):int(center[1] + output_shape / 2)]
         label_patch = label[int(center[0] - output_shape / 2):int(center[0] + output_shape / 2),
@@ -41,14 +58,14 @@ def get_image_chunk(image, label, output_shape, chunk_size):
 
 if __name__ == '__main__':
     labels = sorted(glob.glob(os.path.join(patch_folder, DATA_TYPE) + '/*_label.nrrd'))
-    multiplier = 4000
+    multiplier = 2000
     chunk_size = 8
     shape = 224
     output_folder = os.path.join(npy_folder, 'third_attempt')
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
     else:
-        shutil.rmtre(output_folder)
+        shutil.rmtree(output_folder)
         os.mkdir(output_folder)
     for label_path in labels:
         image_path = label_path.replace('_label', '')
