@@ -4,6 +4,7 @@ import os
 import SimpleITK as sitk
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from collections import OrderedDict
 
 from settings import raw_folder, patch_folder
@@ -24,7 +25,6 @@ def convert_roi(roi_path):
 
 if __name__ == '__main__':
     tifs = sorted(glob.iglob(os.path.join(raw_folder, 'third_attempt') + '/**/*.tif', recursive=True))
-    # tifs = sorted(glob.glob(raw_folder + '/*.tif'))
     tif_index = 0
     output_train_folder = os.path.join(patch_folder, 'train')
     if not os.path.isdir(output_train_folder):
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     if not os.path.isdir(output_test_folder):
         os.mkdir(output_test_folder)
     d = list()
-    for tif_path in tifs:
+    for tif_path in tqdm(tifs):
         if 'train' in tif_path:
             output_folder = output_train_folder
             patch_type = 'train'

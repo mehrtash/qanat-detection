@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 import shutil
 
-from data.helpers import flip_a_coin
+from helpers import flip_a_coin
 from settings import npy_folder, patch_folder
 
 DATA_TYPE = 'train'
