@@ -1,20 +1,21 @@
 import json
 import os
-import numpy as np
-
-from utils.helpers import get_timestamp
-from model.cnn import get_cnn
-
-module_root = '..'
 import sys
 
+import numpy as np
+
+module_root = '..'
 sys.path.append(module_root)
+
+from helpers.utils import get_timestamp
+from model.cnn import get_cnn
 
 
 class Experiments:
     """
     Experiments to train a network. To run move the tank.
     """
+
     def __init__(self, json_file, intermediate_folder):
         jfile = open(json_file)
         config = json.load(jfile)
@@ -39,7 +40,7 @@ class Experiments:
         mean_sub = dataset["mean sub"]
         std_div = dataset["std div"]
         data_folder = os.path.join(self.intermediate_folder, 'data', 'npy', npy_uid, str(fold))
-        x = np.load(os.path.join(data_folder,  'x_train.npy'))
+        x = np.load(os.path.join(data_folder, 'x_train.npy'))
         y = np.load(os.path.join(data_folder, 'y_train.npy'))
         x_val = np.load(os.path.join(data_folder, 'x_val.npy'))
         y_val = np.load(os.path.join(data_folder, 'y_val.npy'))
@@ -86,7 +87,7 @@ class Experiments:
         print('-' * 30)
         print('Creating and compiling model...')
         print('-' * 30)
-        csv_logger = CSVLogger(os.path.join(experiment_folder,  'log.csv'))
+        csv_logger = CSVLogger(os.path.join(experiment_folder, 'log.csv'))
         checkpoint = train_params["checkpoint"]
         model_checkpoint = ModelCheckpoint(os.path.join(experiment_folder, 'model_checkpoint.hdf5'),
                                            monitor=checkpoint["monitor"],
@@ -123,9 +124,8 @@ class Experiments:
         if bool(cnn_params["summary"]):
             print(model.summary())
         model.fit(x, y, batch_size=train_params["batch size"],
-                      epochs=train_params["epochs"],
-                      verbose=train_params["verbose"],
-                      shuffle=True,
-                      callbacks=callbacks_list,
-                      validation_data=validation_data)
-
+                  epochs=train_params["epochs"],
+                  verbose=train_params["verbose"],
+                  shuffle=True,
+                  callbacks=callbacks_list,
+                  validation_data=validation_data)

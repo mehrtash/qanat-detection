@@ -1,9 +1,10 @@
 from keras.layers import Input, Convolution2D, BatchNormalization, \
-    Activation, MaxPooling2D, UpSampling2D, Dropout, Cropping2D, concatenate
+    Activation, MaxPooling2D, UpSampling2D, Dropout, concatenate
 from keras.layers.advanced_activations import PReLU, LeakyReLU
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.regularizers import l2
+
 from model.helpers import dice_coef, dice_coef_loss
 
 
@@ -21,7 +22,7 @@ class Unet:
         elif activation_type == 'lrelu':
             return LeakyReLU()(x)
 
-    def conv_bn_relu(self, x, nb_filter, kernel_dim1, kernel_dim2):
+    def conv_bn_relu(self, x, nb_filter, kernel_dim1, kernel_dim2, dropout=True):
         conv = Convolution2D(nb_filter, (kernel_dim1, kernel_dim2),
                              kernel_initializer='he_normal',
                              activation=None,
@@ -29,8 +30,9 @@ class Unet:
                              kernel_regularizer=l2(self.model_params["l2_penalty"]),
                              bias_regularizer=None,
                              activity_regularizer=None)(x)
-        dropout = Dropout(self.model_params["dropout_prob"])(conv)
-        norm = BatchNormalization(axis=-1)(dropout)
+        if dropout:
+            conv = Dropout(self.model_params["dropout_prob"])(conv)
+        norm = BatchNormalization(momentum=0.9, axis=-1)(conv)
         x = self.activation_layer(norm)
         return x
 

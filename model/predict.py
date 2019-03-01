@@ -1,18 +1,19 @@
 import json
-import SimpleITK as sitk
-from keras import backend as K
-from skimage import io
-import numpy as np
 import os
 import shutil
+import sys
+
+import SimpleITK as sitk
+import numpy as np
+from keras import backend as K
+from skimage import io
 from tqdm import tqdm
 
 module_root = '..'
-import sys
-
 sys.path.append(module_root)
+
 from model.cnn import get_cnn
-from data.helpers import shrink_image, correct_exposure, expand_image
+from helpers.data import shrink_image, correct_exposure, expand_image
 from settings import patch_folder
 
 
@@ -56,7 +57,10 @@ class Segmenter(object):
             patch_nda = sitk.GetArrayFromImage(patch_image)
             max_val = np.amax(patch_nda)
             patch_nda = patch_nda / max_val
+            npad = ((input_shape, input_shape), (input_shape, input_shape))
+            patch_nda = np.pad(patch_nda, pad_width=npad, mode='constant', constant_values=0)
             patch_shape = patch_nda.shape
+
             step = 10
             n = (patch_shape[0] - input_shape) // step
             array = np.zeros((n ** 2, input_shape, input_shape, 1))
@@ -74,9 +78,11 @@ class Segmenter(object):
             counter = 0
             for i in range(n):
                 for j in range(n):
-                    patch_pred[i * step:(i * step) + input_shape, j * step:j * step + input_shape] += prediction[counter, :,
+                    patch_pred[i * step:(i * step) + input_shape, j * step:j * step + input_shape] += prediction[
+                                                                                                      counter, :,
                                                                                                       :, 0]
                     counter += 1
+            patch_pred = patch_pred[input_shape:-input_shape, input_shape:-input_shape]
             patch_pred_image = sitk.GetImageFromArray(patch_pred)
             patch_pred_image.CopyInformation(srcImage=patch_image)
 

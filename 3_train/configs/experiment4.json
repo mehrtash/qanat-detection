@@ -1,0 +1,65 @@
+{
+  "experiment": {
+    "id": "unet",
+    "experiment description": "third attempt seven fold cross validation",
+    "datasets": [
+      {
+        "npy uid": "train_2019_02_22",
+        "folds": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "mean sub": 0,
+        "std div": 0
+      }
+    ],
+    "cnns": [
+      {
+        "id": "unet",
+        "summary": 1,
+        "params": {
+          "activation": "relu",
+          "l2_penalty": 1e-3,
+          "dropout_prob": 0.3,
+          "filter_factor": 4,
+          "adam_lr": 1e-4,
+          "n_classes": 1
+        }
+      }
+    ],
+    "trainparams": [
+      {
+        "batch size": 16,
+        "epochs": 100,
+        "verbose": 1,
+        "early stopping": {
+          "monitor": "val_dice_coef",
+          "mode": "max",
+          "min_delta": 1e-5,
+          "patience": 10,
+          "verbose": 1
+        },
+        "lr": {
+          "policy": "reduce lr",
+          "params": {
+            "monitor": "val_dice_coef",
+            "mode": "max",
+            "initial_lr": 1e-3,
+            "factor": 0.8,
+            "patience": 5,
+            "min_lr": 1e-9,
+            "epsilon": 1e-5
+          }
+        },
+        "checkpoint": {
+          "monitor": "val_dice_coef",
+          "mode": "max"
+        }
+      }
+    ]
+  }
+}
