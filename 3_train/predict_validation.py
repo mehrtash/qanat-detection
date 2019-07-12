@@ -13,7 +13,7 @@ from model.predict import Segmenter
 if __name__ == '__main__':
 
     train_folders = sorted(os.listdir(train_folder))
-    train_folders = ['2018_02_17_11_33_58', ]
+    # train_folders = ['2018_02_17_11_33_58', ]
     for train_folder in train_folders:
         print('*%$'*30)
         print('*%$'*30)

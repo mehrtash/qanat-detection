@@ -2,7 +2,7 @@ import os
 import socket
 
 folders = []
-if socket.gethostname() in ['odysseus']:
+if socket.gethostname() in ['bezd']:
     root = "/home/mehrtash/dropbox/qanat_v2/"
     raw_folder = os.path.join(root, 'raw')
     intermediate_folder = os.path.join(root, 'intermediate')
@@ -12,7 +12,7 @@ folders.append(intermediate_folder)
 # data folders
 data_folder = os.path.join(intermediate_folder, 'data')
 folders.append(data_folder)
-patch_folder = os.path.join(data_folder, 'patch')
+patch_folder = os.path.join(data_folder, 'patch', 'train')
 folders.append(patch_folder)
 split_folder = os.path.join(data_folder, 'split')
 folders.append(split_folder)
