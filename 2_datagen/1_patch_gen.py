@@ -29,17 +29,11 @@ if __name__ == '__main__':
     output_train_folder = os.path.join(patch_folder, 'train')
     if not os.path.isdir(output_train_folder):
         os.mkdir(output_train_folder)
-    output_test_folder = os.path.join(patch_folder, 'test')
-    if not os.path.isdir(output_test_folder):
-        os.mkdir(output_test_folder)
     d = list()
     for tif_path in tqdm(tifs):
         if 'train' in tif_path:
             output_folder = output_train_folder
             patch_type = 'train'
-        else:
-            output_folder = output_test_folder
-            patch_type = 'test'
         image = sitk.ReadImage(tif_path)
         spacing = image.GetSpacing()
         nda = sitk.GetArrayFromImage(image)

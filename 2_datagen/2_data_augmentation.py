@@ -58,7 +58,7 @@ def get_image_chunk(image, label, output_shape, chunk_size):
 
 if __name__ == '__main__':
     labels = sorted(glob.glob(os.path.join(patch_folder, DATA_TYPE) + '/*_label.nrrd'))
-    multiplier = 2000
+    multiplier = 100
     chunk_size = 8
     shape = 224
     output_folder = os.path.join(npy_folder, 'third_attempt')

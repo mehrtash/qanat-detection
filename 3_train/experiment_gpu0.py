@@ -10,7 +10,7 @@ sys.path.append(module_root)
 from model.train import Experiments
 from settings import intermediate_folder
 
-JSON_CONFIG_FILE = os.path.abspath(os.path.join('.', 'configs', 'experiment4.json'))
+JSON_CONFIG_FILE = os.path.abspath(os.path.join('.', 'configs', 'experiment5.json'))
 
 if __name__ == '__main__':
     experiments = Experiments(JSON_CONFIG_FILE, intermediate_folder)

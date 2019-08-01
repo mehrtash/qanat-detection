@@ -13,7 +13,7 @@ if __name__ == '__main__':
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 
-    kf = KFold(n_splits=7, shuffle=True)
+    kf = KFold(n_splits=5, shuffle=True)
     x = np.arange(0, len(labels))
     fold = 0
     for train_index, val_index in kf.split(x):
